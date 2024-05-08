@@ -5,11 +5,20 @@ using System.Data;
 using MyCourse.Models.Services.Infrastructure;
 using Microsoft.Data.Sqlite;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace MyCourse.Models.Services.Infrastructure
 {
+
     public class SqliteDatabaseAccessor : IDatabaseAccessor //classe che implementera concretamente il servizio infrastrutturale cioe si connettera al database ed eseguira le query scritte in sql
     {
+
+      private readonly IConfiguration configuration;//proprietà tramite cui setterò la connessione al database
+
+      public SqliteDatabaseAccessor(IConfiguration configuration)
+      {
+        this.configuration=configuration;
+      }
        public async Task<DataSet> QueryAsync(FormattableString formattableQuery) 
        { var queryArguments=formattableQuery.GetArguments(); //tramite questo metodo recupero tutti i valori iniettati dall applicazione nella query 
          var sqliteParameters = new List<SqliteParameter>();
@@ -23,7 +32,9 @@ namespace MyCourse.Models.Services.Infrastructure
         string query = formattableQuery.ToString();
          //stabilire una connessione con il db
        //ho stabilito una connessione con il db sqlite MyCourse.db
-         using(var conn = new SqliteConnection("Data Source=Data/MyCourse.db"))
+         //using(var conn = new SqliteConnection("Data Source=Data/MyCourse.db"))
+         string connectionString= configuration.GetConnectionString("Default");
+         using(var conn = new SqliteConnection(connectionString))
          { 
           await conn.OpenAsync();
             //conn.Open(); //automaticamente ADO.net recuperera una nuova connessione dal collection pool 

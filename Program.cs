@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 
 namespace MyCourse
 {
@@ -18,8 +19,15 @@ namespace MyCourse
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+       // public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+         //   WebHost.CreateDefaultBuilder(args)
+               // .UseStartup<Startup>(); aggiornamento alla versione 3.0
+
+                public static IHostBuilder CreateWebHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webHostBuilder => {
+                    webHostBuilder.UseStartup<Startup>();
+                });
+
     }
 }

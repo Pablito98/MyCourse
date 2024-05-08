@@ -24,7 +24,11 @@ namespace MyCourse.Models.Services.Application
             //crea un oggetto di tipo List<CourseViewModel> che verrà passato alla View
             //stavolta questo oggetto lo popola utilizzando il metodo Select del Framework Entity Core
             //il quale richiede una espressione lambda tramite cui popoliamo gli oggetti di tipo Entity Course
-            List<CourseViewModel> courses = await dbContext.Courses.Select(course => new CourseViewModel 
+            //List<CourseViewModel> courses = await dbContext.Courses;
+            IQueryable<CourseViewModel> queryLinq =  dbContext.Courses
+            .AsNoTracking()
+            .Select(course => CourseViewModel.FromEntity(course));
+            /*.Select(course => new CourseViewModel 
             {
                 Id = course.Id,
                 Titolo = course.Title,
@@ -33,7 +37,9 @@ namespace MyCourse.Models.Services.Application
                 Rating = course.Rating,
                 PrezzoFull = course.FullPrice,
                 PrezzoScontato = course.CurrentPrice
-            }).ToListAsync();//Viene aperta una connessione con il db e inviata la query al database 
+            });//.ToListAsync();*/
+
+            List<CourseViewModel> courses = await queryLinq.ToListAsync();//Viene aperta una connessione con il db e inviata la query al database 
 
             return courses; 
         }
@@ -42,9 +48,13 @@ namespace MyCourse.Models.Services.Application
         //SELECT * FROM Courses Where Id=id
         public async Task<CourseDetailViewModel> GetCourseAsync(int id)
         {
-                CourseDetailViewModel viewModel = await dbContext.Courses
+                //CourseDetailViewModel viewModel = await dbContext.Courses
+                IQueryable<CourseDetailViewModel> queryLinq = dbContext.Courses
+                .AsNoTracking()
+                .Include(course => course.Lessons)
                 .Where(course => course.Id == id)
-                .Select(course => new CourseDetailViewModel 
+                .Select(course => CourseDetailViewModel.FromEntity(course));
+                /*.Select(course => new CourseDetailViewModel 
                 {
                     Id = course.Id,
                     Titolo = course.Title,
@@ -62,7 +72,9 @@ namespace MyCourse.Models.Services.Application
                         Titolo = lesson.Title,
                         Durata = lesson.Duration
                     }).ToList()//si connette al database e recupera la lista delle lezioni associate al corso
-                }).SingleAsync();//Restituisce il primo elemento dell'elenco, ma se l'elenco ne contiene 0 o più di 1, solleva un'eccezione
+                });//.SingleAsync();//Restituisce il primo elemento dell'elenco, ma se l'elenco ne contiene 0 o più di 1, solleva un'eccezione*/
+
+                CourseDetailViewModel viewModel = await queryLinq.SingleAsync();
 
                 return viewModel;
         }

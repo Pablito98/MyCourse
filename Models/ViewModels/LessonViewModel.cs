@@ -4,6 +4,7 @@ using System.Linq;
 using System.Data;
 using MyCourse.Models.Enums;
 using MyCourse.Models.ValueTypes;
+using MyCourse.Models.Entities;
 
 
 namespace MyCourse.Models.ViewModels
@@ -23,6 +24,16 @@ namespace MyCourse.Models.ViewModels
             };
 
             return lessonViewModel;
+        }
+
+        public static LessonViewModel FromEntity(Lesson lesson){
+            return new LessonViewModel
+            {
+                Id = lesson.Id,
+                Titolo = lesson.Title,
+                Durata = lesson.Duration,
+                
+            };
         }
 
 

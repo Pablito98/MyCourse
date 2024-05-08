@@ -4,6 +4,8 @@ using System.Linq;
 using System.Data;
 using MyCourse.Models.Enums;
 using MyCourse.Models.ValueTypes;
+using MyCourse.Models.Entities;
+using MyCourse.Controllers;
 
 namespace MyCourse.Models.ViewModels
 {
@@ -48,5 +50,19 @@ namespace MyCourse.Models.ViewModels
             return courseDetailViewModel;
                 
             } 
+
+            public static new CourseDetailViewModel FromEntity(Course course){
+                return new CourseDetailViewModel{
+                    Id = course.Id,
+                    Titolo = course.Title,
+                    Descrizione = course.Description,
+                    Autore = course.Author,
+                    ImgPath = course.ImagePath,
+                    Rating = course.Rating,
+                    PrezzoScontato = course.CurrentPrice,
+                    PrezzoFull = course.FullPrice,
+                    Lezioni = course.Lessons.Select(lesson => LessonViewModel.FromEntity(lesson)).ToList()
+                };
+            }
         }
     }
