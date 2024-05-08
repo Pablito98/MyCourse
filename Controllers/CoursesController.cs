@@ -26,12 +26,12 @@ namespace MyCourse.Controllers
 
 
         //metodo per recuperare la lista di tutti i corsi
-        public async Task<IActionResult> Index() 
+        public async Task<IActionResult> Index(string search, int page, string orderby, bool ascending) 
         {
             //var courseService = new CourseService(); //invocazione del servizio
             //la creazione dell'oggetto (servizio) non serve più perchè tramite l'injection, asp.net core lo fa in automatico
             
-            List<CourseViewModel> courses =await CourseService.GetCoursesAsync();
+            List<CourseViewModel> courses =await CourseService.GetCoursesAsync(search,page, orderby, ascending);
             
             ViewData["Title"] = "Elenco dei corsi";
             return View(courses); //ritorna la lista di tutti i corsi
@@ -52,7 +52,7 @@ namespace MyCourse.Controllers
             //return Redirect("https://www.amazon.it/");
         }
 
-    public IActionResult Ricerca(string cerca)
+   /* public IActionResult Ricerca(string cerca)
 {
     // Controlla se la stringa di ricerca è vuota
     if (cerca=="tutti")
@@ -64,10 +64,10 @@ namespace MyCourse.Controllers
     }
     else {
         return RedirectToAction("detail" , new {id = cerca});
-    }
+    }*/
 
    
-} 
+
 
 
 
