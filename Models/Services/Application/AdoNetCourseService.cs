@@ -6,6 +6,7 @@ using System.Data;
 using System.Threading.Tasks;
 using MyCourse.Models.ViewModels;
 using MyCourse.Models.ValueTypes;
+using MyCourse.Models.InputModels;
 
 
 namespace MyCourse.Models.Services.Application
@@ -18,12 +19,14 @@ namespace MyCourse.Models.Services.Application
         {
             this.db=db;
         }
-        public async Task<List<CourseViewModel>> GetCoursesAsync(string search, int page, string orderby, bool ascending)
+        //public async Task<List<CourseViewModel>> GetCoursesAsync(string search, int page, string orderby, bool ascending)
+        public async Task<List<CourseViewModel>> GetCoursesAsync(CourseListInputModel model)
          {
-            orderby=orderby ?? "Rating";
+            
+            string orderby = model.OrderBy;
             string direction = "";
             
-                    if(ascending == true){
+                    if(model.Ascending == true){
                         direction ="ASC";
                     }
                     else{direction = "DESC";}
@@ -35,9 +38,7 @@ namespace MyCourse.Models.Services.Application
                     orderby = "CurrentPrice_Amount";
             }
             
-            int limit= 10;
-            int offset=(page-1)*limit;
-            FormattableString query= $"SELECT Id, Title,ImagePath, Author,Rating,FullPrice_Amount, FullPrice_Currency, CurrentPrice_Amount, CurrentPrice_Currency FROM Courses WHERE Title LIKE {"%"+search+"%"} ORDER BY {(Sql) orderby} {(Sql) direction} LIMIT {limit} OFFSET {offset}"; //con LIKE e {"%"+search+"%"}"  gli diciamo che nella condizione search deve essere contenuto nei titoli dei corsi
+            FormattableString query= $"SELECT Id, Title,ImagePath, Author,Rating,FullPrice_Amount, FullPrice_Currency, CurrentPrice_Amount, CurrentPrice_Currency FROM Courses WHERE Title LIKE {"%"+model.Search+"%"} ORDER BY {(Sql) orderby} {(Sql) direction} LIMIT {model.Limit} OFFSET {model.Offset}"; //con LIKE e {"%"+search+"%"}"  gli diciamo che nella condizione search deve essere contenuto nei titoli dei corsi
             DataSet dataSet=await db.QueryAsync(query);
             var dataTable= dataSet.Tables[0]; //recupera la prima tabella del dataset
             var courseList = new List<CourseViewModel>(); //crea la lista di corsi che deve eseere passata all view

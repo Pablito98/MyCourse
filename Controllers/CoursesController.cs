@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using MyCourse.Models.Services.Application;
 using MyCourse.Models.ViewModels;
+using MyCourse.Models.InputModels;
 using System.Threading.Tasks;
 
 
@@ -26,15 +27,22 @@ namespace MyCourse.Controllers
 
 
         //metodo per recuperare la lista di tutti i corsi
-        public async Task<IActionResult> Index(string search, int page, string orderby, bool ascending) 
+        //public async Task<IActionResult> Index(string search, int page, string orderby, bool ascending) 
+        public async Task<IActionResult> Index(CourseListInputModel model)
         {
             //var courseService = new CourseService(); //invocazione del servizio
             //la creazione dell'oggetto (servizio) non serve più perchè tramite l'injection, asp.net core lo fa in automatico
             
-            List<CourseViewModel> courses =await CourseService.GetCoursesAsync(search,page, orderby, ascending);
+            //List<CourseViewModel> courses =await CourseService.GetCoursesAsync(search,page, orderby, ascending);
+            List<CourseViewModel> courses = await CourseService.GetCoursesAsync(model);
+
+            CourseListViewModel viewModel = new CourseListViewModel{
+                Courses = courses,
+                Input = model
+            };
             
             ViewData["Title"] = "Elenco dei corsi";
-            return View(courses); //ritorna la lista di tutti i corsi
+            return View(viewModel); //ritorna la lista di tutti i corsi
         }
 
         //metodo che deve recuperare le info dello specifico corso avente un certo id

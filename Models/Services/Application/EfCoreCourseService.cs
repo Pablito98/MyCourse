@@ -7,6 +7,7 @@ using MyCourse.Models.Services.Infrastructure;
 using MyCourse.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using MyCourse.Models.InputModels;
 
 namespace MyCourse.Models.Services.Application
 {
@@ -20,24 +21,25 @@ namespace MyCourse.Models.Services.Application
 
         //recupera tutte le info dei corsi da database
         //SELECT * FROM Courses
-        public async Task<List<CourseViewModel>> GetCoursesAsync(string search, int page, string orderby, bool ascending)
-        {  search=search ?? ""; // operatore per verificare che search non sia nullo, se è nullo viene settato a stringa vuota
-           int limit = 10;
-            int offset=(page-1)*limit;
+        //public async Task<List<CourseViewModel>> GetCoursesAsync(string search, int page, string orderby, bool ascending)
+        public async Task<List<CourseViewModel>> GetCoursesAsync(CourseListInputModel model)
+        {  //search=search ?? ""; // operatore per verificare che search non sia nullo, se è nullo viene settato a stringa vuota
+           //int limit = 10;
+            //int offset=(page-1)*limit;
 
-            orderby=orderby ?? "Rating";
+            //orderby=orderby ?? "Rating";
             
             IQueryable<Course> baseQuery =  dbContext.Courses;
-            switch(orderby){
+            switch(model.OrderBy){
                 case "Title":
-                    if(ascending){
+                    if(model.Ascending){
                         baseQuery = baseQuery.OrderBy(course => course.Title);
                     }
                     else{
                         baseQuery = baseQuery.OrderByDescending(course => course.Title);
                     }break;
                 case "Rating":
-                    if(ascending){
+                    if(model.Ascending){
                         baseQuery = baseQuery.OrderBy(course => course.Rating);
                     }
                     else{
@@ -45,11 +47,11 @@ namespace MyCourse.Models.Services.Application
                     }
                     break;
                 case "CurrentPrice":
-                    if(ascending){
+                    if(model.Ascending){
                         baseQuery = baseQuery.OrderBy(course => (double)course.CurrentPrice.Amount);
                     }
                     else{
-                        baseQuery = baseQuery.OrderByDescending(course => course.CurrentPrice.Amount);
+                        baseQuery = baseQuery.OrderByDescending(course => (double)course.CurrentPrice.Amount);
                     }
                     break;
             }
@@ -59,10 +61,10 @@ namespace MyCourse.Models.Services.Application
             //il quale richiede una espressione lambda tramite cui popoliamo gli oggetti di tipo Entity Course
             //List<CourseViewModel> courses = await dbContext.Courses;
             IQueryable<CourseViewModel> queryLinq = baseQuery
-            .Skip(offset) //skip salta i primi risultati (offset valori) come OFFSET in ADO 
-            .Take(limit)  //prende i primi valori (limit) come LIMIT in ADO
+            .Skip(model.Offset) //skip salta i primi risultati (offset valori) come OFFSET in ADO 
+            .Take(model.Limit)  //prende i primi valori (limit) come LIMIT in ADO
             .AsNoTracking()
-            .Where(course => course.Title.Contains(search))
+            .Where(course => course.Title.Contains(model.Search))
             .Select(course => CourseViewModel.FromEntity(course));
             /*.Select(course => new CourseViewModel 
             {
