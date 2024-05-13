@@ -60,6 +60,23 @@ namespace MyCourse.Controllers
             //return Redirect("https://www.amazon.it/");
         }
 
+  [HttpGet]
+         public IActionResult Create()
+        {
+            ViewData["Title"] = "Nuovo corso";
+            return View();
+        }
+
+
+[HttpPost]
+          public async Task<IActionResult> Create(CourseCreateInputModel inputModel)
+        {
+            
+          CourseDetailViewModel course = await CourseService.CreateCourseAsync(inputModel);
+           //return RedirectToAction(nameof(Index)); //questo metodo reindirizzera all azione index
+             return RedirectToAction("Index");
+        }
+
    /* public IActionResult Ricerca(string cerca)
 {
     // Controlla se la stringa di ricerca è vuota

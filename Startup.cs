@@ -34,7 +34,9 @@ namespace MyCourse
             //registrazione del servizio di dependency a injection:
             // services.AddTransient<ICourseService, CourseService>(); 
             //services.AddTransient<ICourseService, AdoNetCourseService>(); // il servizio precedente (riga 28) che implementava il servizio in maniera random viene sostituito dal nuovo servizio che leggera i dati da db
-            services.AddTransient<ICourseService, EfCoreCourseService>();
+             services.AddTransient<ICourseService, EfCoreCourseService>();
+
+            // services.AddTransient<ICourseService, AdoNetCourseService>();
 
             //quando un controller ha nel suo costruttore un oggetto di tipo ICourseService, crea un oggetto di tipo CourseService
             services.AddTransient<IDatabaseAccessor, SqliteDatabaseAccessor>();

@@ -16,6 +16,8 @@ namespace MyCourse.Models.Services.Application
       
       Task<List<CourseViewModel>> GetCoursesAsync(CourseListInputModel model);
       Task<CourseDetailViewModel> GetCourseAsync(int id);
+
+      Task<CourseDetailViewModel>CreateCourseAsync(CourseCreateInputModel inputModel);
         
 
     }

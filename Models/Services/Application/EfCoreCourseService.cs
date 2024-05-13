@@ -29,6 +29,7 @@ namespace MyCourse.Models.Services.Application
 
             //orderby=orderby ?? "Rating";
             
+            
             IQueryable<Course> baseQuery =  dbContext.Courses;
             switch(model.OrderBy){
                 case "Title":
@@ -115,6 +116,19 @@ namespace MyCourse.Models.Services.Application
                 CourseDetailViewModel viewModel = await queryLinq.SingleAsync();//qui avviene la connessione con in db e l'esecuzione della query
 
                 return viewModel;
+        }
+
+        public async Task<CourseDetailViewModel>CreateCourseAsync(CourseCreateInputModel inputModel)
+        {
+            string title= inputModel.Title;
+            string author= "paolo";
+
+            var course = new Course(title,author);
+
+            dbContext.Add(course);
+            await dbContext.SaveChangesAsync();
+            return CourseDetailViewModel.FromEntity(course);
+
         }
     }
 }
